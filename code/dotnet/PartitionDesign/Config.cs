@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration.Json;
 
 namespace PartitionDesign {
 
-public class Config
+    public class Config
     {
         public static string cosmosEndpoint = "";
         public static string cosmosKey = "";

@@ -52,3 +52,4 @@ C:\Arquivos\Projects\Luti\cosmosdb\code\dotnet\PartitionDesign\obj\Debug\net6.0\
 C:\Arquivos\Projects\Luti\cosmosdb\code\dotnet\PartitionDesign\obj\Debug\net6.0\PartitionDesign.pdb
 C:\Arquivos\Projects\Luti\cosmosdb\code\dotnet\PartitionDesign\obj\Debug\net6.0\PartitionDesign.genruntimeconfig.cache
 C:\Arquivos\Projects\Luti\cosmosdb\code\dotnet\PartitionDesign\obj\Debug\net6.0\ref\PartitionDesign.dll
+C:\Arquivos\Projects\Luti\cosmosdb\code\dotnet\PartitionDesign\bin\Debug\net6.0\appsettings.json
