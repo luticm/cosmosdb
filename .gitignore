@@ -25,7 +25,7 @@ msbuild.wrn
 
 #Config files
 **.config
-**appsettings.json
+**/appsettings.json
 
 #Not ready
 #Scenarios/
