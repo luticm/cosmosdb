@@ -38,7 +38,7 @@ namespace PartitionDesign
                 // Define smaller throughput - each partition 200 RUs
                 ThroughputResponse tr = await c.ReplaceThroughputAsync(1000);
 
-                DateTime baseTime = new DateTime(2022, 01, 01);
+                DateTime baseTime = new DateTime(2022, 11, 01);
                 String readingId;
                 string timeRange;
                 SimpleSensor ss;

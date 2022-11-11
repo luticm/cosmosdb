@@ -14,6 +14,7 @@ namespace PartitionDesign
     {
         private string databaseName;
         private string containerName;
+        private CosmosClient cc;
 
         public HotPartition() : this("Learn", "HotPartition")
         {
@@ -23,6 +24,8 @@ namespace PartitionDesign
         {
             this.databaseName = databaseName;
             this.containerName = containerName;
+
+            this.cc = Config.InitializeClient();
         }
 
         /// <summary>
@@ -30,11 +33,9 @@ namespace PartitionDesign
         /// </summary>
         /// <returns></returns>
         public async Task CreateStructure_LoadDocs()
-        {
-            CosmosClient cc = Config.InitializeClient();
+        {  
             try
             {
-
                 DatabaseResponse dbResp = await cc.CreateDatabaseIfNotExistsAsync(databaseName);
 
                 // 5 partition container 30000 / 6000
@@ -43,8 +44,20 @@ namespace PartitionDesign
 
                 Container c = ctrResp.Container;
 
-                // Force small throughput - each partition 200 RUs
-                ThroughputResponse tr = await c.ReplaceThroughputAsync(1000);
+                // Force small throughput - each partition 400 RUs
+                ThroughputResponse tr = await c.ReplaceThroughputAsync(2000);
+            }
+            catch (Exception ex)
+            {
+                // Exception handling ...
+                throw;
+            }
+        }
+
+        public async Task LoadDocs() {
+            try
+            {
+                Container c = cc.GetContainer(databaseName, containerName);
 
                 String newId;
                 SimpleEntity d;
@@ -58,7 +71,7 @@ namespace PartitionDesign
                     d = new SimpleEntity(newId, (((i % 100) < 50) ? 0 : (i % 100)).ToString(), newId, newId, null);
 
                     // Every 100 request, make an async call to avoid excessive throttling
-                    if (i % 100 == 0)
+                    if (i % 50 == 0)
                     {
                         ird = await c.CreateItemAsync<SimpleEntity>(d);
                         Console.WriteLine("Writing simple entities: {0}", i.ToString());

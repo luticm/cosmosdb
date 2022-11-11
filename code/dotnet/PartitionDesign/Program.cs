@@ -27,6 +27,7 @@ while (true) {
         case 1: 
             Console.WriteLine("1 - Hot partition");
             await ht.CreateStructure_LoadDocs();
+            await ht.LoadDocs();
             break;
         case 2:
             Console.WriteLine("2 - Hot partition time");
