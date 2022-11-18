@@ -12,6 +12,7 @@ while (true) {
     Console.WriteLine("Choose an option. 0 to exit:");
     Console.WriteLine("1 - Hot partition");
     Console.WriteLine("2 - Hot partition time");
+    Console.WriteLine("8 - Quick test");
     Console.WriteLine("9 - Clean up");
 
     Int32.TryParse(Console.ReadLine(), out option);
@@ -32,6 +33,11 @@ while (true) {
         case 2:
             Console.WriteLine("2 - Hot partition time");
             await htt.CreateStructure_LoadDocs();
+            break;
+        case 8:
+            Console.WriteLine("8 - Quick test");
+            await ht.SimpleQuery();
+            await ht.SimpleQueryCrossPK();
             break;
         case 9:
             Console.WriteLine("9 - Clean up");

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -79,6 +80,69 @@ namespace PartitionDesign
                     else
                     {
                         var response = c.CreateItemAsync<SimpleEntity>(d);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Exception handling ...
+                throw;
+            }
+        }
+
+        // Demonstrate single PK and cross partition queries
+        public async Task SimpleQuery()
+        {
+            Container c = cc.GetContainer(databaseName, containerName);
+            using StreamWriter sw = new StreamWriter(@"c:\temp\QueryOutput_DiagnosticsSample.txt");
+            List<SimpleEntity> resultado = new List<SimpleEntity>();
+
+            try
+            {
+                QueryDefinition query = new QueryDefinition("SELECT * FROM c WHERE c.Pk = '51'");
+                using (FeedIterator<SimpleEntity> rsIterator = c.GetItemQueryIterator<SimpleEntity>(query
+                    , requestOptions: new QueryRequestOptions() { PartitionKey = new PartitionKey("51"), MaxItemCount = 1000 }))
+                {
+                    while (rsIterator.HasMoreResults)
+                    {
+                        FeedResponse<SimpleEntity> response = await rsIterator.ReadNextAsync();
+                        resultado.AddRange(response);
+                        if (response.Diagnostics != null)
+                        {
+                            await sw.WriteLineAsync(response.Diagnostics.ToString());
+
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Exception handling ...
+                throw;
+            }
+        }
+
+        public async Task SimpleQueryCrossPK()
+        {
+            Container c = cc.GetContainer(databaseName, containerName);
+            using StreamWriter sw = new StreamWriter(@"c:\temp\QueryOutputCrossPK_DiagnosticsSample.txt");
+            List<SimpleEntity> resultado = new List<SimpleEntity>();
+
+            try
+            {
+                QueryDefinition query = new QueryDefinition("SELECT * FROM c WHERE c.Pk in ('51', '52')");
+                using (FeedIterator<SimpleEntity> rsIterator = c.GetItemQueryIterator<SimpleEntity>(query
+                    , requestOptions: new QueryRequestOptions() { MaxItemCount = 1000 }))
+                {
+                    while (rsIterator.HasMoreResults)
+                    {
+                        FeedResponse<SimpleEntity> response = await rsIterator.ReadNextAsync();
+                        resultado.AddRange(response);
+                        if (response.Diagnostics != null)
+                        {
+                            await sw.WriteLineAsync(response.Diagnostics.ToString());
+
+                        }
                     }
                 }
             }
