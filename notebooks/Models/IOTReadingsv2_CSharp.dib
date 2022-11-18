@@ -1,0 +1,50 @@
+#!markdown
+
+- reference documentation: https://github.com/dotnet/interactive/blob/main/docs/magic-commands.md
+
+#!csharp
+
+#r "nuget:Microsoft.Azure.Cosmos"
+
+#!csharp
+
+using Microsoft.Azure.Cosmos;
+
+string cosmosAccountURI = Environment.GetEnvironmentVariable("COSMOS_ACCOUNT_URI");
+string cosmosAccountKey = Environment.GetEnvironmentVariable("COSMOS_ACCOUNT_KEY");
+
+string databaseName = "Models";
+string containerName = "Cnt10PhysicalPartitions";
+string partitionKeypath = @"/PartitionKey";
+string osPath = @"./OutputFiles/";
+
+CosmosClient client = new CosmosClient(cosmosAccountURI, cosmosAccountKey, new CosmosClientOptions() { ConnectionMode = ConnectionMode.Gateway});
+Container ctr = client.GetContainer(databaseName, containerName);
+
+#!csharp
+
+List<dynamic> result = new List<dynamic>();
+double totalRU = 0;
+
+QueryDefinition query = new QueryDefinition("SELECT SUBSTRING(c.PartitionKey, 0, 23) AS PK, COUNT(c.id) AS Total FROM c GROUP BY SUBSTRING(c.PartitionKey, 0, 23)");
+using (FeedIterator<dynamic> rsIterator = ctr.GetItemQueryIterator<dynamic>(query
+    , requestOptions: new QueryRequestOptions() { MaxItemCount = 100 }))
+{
+    while (rsIterator.HasMoreResults)
+    {
+        FeedResponse<dynamic> response = await rsIterator.ReadNextAsync();
+        result.AddRange(response.Resource);
+        totalRU += response.RequestCharge;
+
+        // if (response.Diagnostics != null)
+        // {
+        //     Console.WriteLine($"\nQuery Diagnostics: {response.Diagnostics.ToString()}");
+        // }
+    }
+}
+
+Console.WriteLine("Total RU: {0}: ", totalRU);
+Console.WriteLine("Query result: ");
+foreach(Object r in result) {
+    Console.WriteLine(r.ToString());
+}
