@@ -26,7 +26,7 @@ Container ctr = client.GetContainer(databaseName, containerName);
 List<dynamic> result = new List<dynamic>();
 double totalRU = 0;
 
-QueryDefinition query = new QueryDefinition("SELECT SUBSTRING(c.PartitionKey, 0, 23) AS PK, COUNT(c.id) AS Total FROM c GROUP BY SUBSTRING(c.PartitionKey, 0, 23)");
+QueryDefinition query = new QueryDefinition("SELECT SUBSTRING(c.PartitionKey, 0, 23) AS PK, COUNT(c.id) AS Total, MIN(c.PartitionKey) as MinPK, MAX(c.PartitionKey) AS MaxPK FROM c GROUP BY SUBSTRING(c.PartitionKey, 0, 23)");
 using (FeedIterator<dynamic> rsIterator = ctr.GetItemQueryIterator<dynamic>(query
     , requestOptions: new QueryRequestOptions() { MaxItemCount = 100 }))
 {
@@ -40,6 +40,65 @@ using (FeedIterator<dynamic> rsIterator = ctr.GetItemQueryIterator<dynamic>(quer
         // {
         //     Console.WriteLine($"\nQuery Diagnostics: {response.Diagnostics.ToString()}");
         // }
+    }
+}
+
+Console.WriteLine("Total RU: {0}: ", totalRU);
+Console.WriteLine("Query result: ");
+foreach(Object r in result) {
+    Console.WriteLine(r.ToString());
+}
+
+#!markdown
+
+## Query tests
+
+#!csharp
+
+// Single physical partition
+
+List<dynamic> result = new List<dynamic>();
+double totalRU = 0;
+
+QueryDefinition query = new QueryDefinition("SELECT c.PartitionKey, count(r.Dimension) AS Count, max(c.Entity.Name) AS Entity, sum(r.Metric) AS Metric  FROM c JOIN r in c.Readings WHERE c.PartitionKey = 'vulT_488002475746_Type6' GROUP BY c.PartitionKey");
+using (FeedIterator<dynamic> rsIterator = ctr.GetItemQueryIterator<dynamic>(query
+    , requestOptions: new QueryRequestOptions() { MaxItemCount = 10000 }))
+{
+    while (rsIterator.HasMoreResults)
+    {
+        FeedResponse<dynamic> response = await rsIterator.ReadNextAsync();
+        result.AddRange(response.Resource);
+        totalRU += response.RequestCharge;
+    }
+}
+
+Console.WriteLine("Total RU: {0}: ", totalRU);
+Console.WriteLine("Query result: ");
+foreach(Object r in result) {
+    Console.WriteLine(r.ToString());
+}
+
+#!csharp
+
+// Cross partition query
+
+List<dynamic> result = new List<dynamic>();
+double totalRU = 0;
+
+// SELECT SUBSTRING(c.PartitionKey, 0, 23) AS PartitionKey, count(r.Dimension) AS Count, max(c.Entity.Name) AS Entity, sum(r.Metric) AS Metric
+// FROM c JOIN r in c.Readings 
+// WHERE startswith(c.PartitionKey, 'fYuo_086671929026_Type3') 
+// GROUP BY SUBSTRING(c.PartitionKey, 0, 23)
+
+QueryDefinition query = new QueryDefinition("SELECT SUBSTRING(c.PartitionKey, 0, 23) AS PartitionKey, count(r.Dimension) AS Count, max(c.Entity.Name) AS Entity, sum(r.Metric) AS Metric FROM c JOIN r in c.Readings WHERE startswith(c.PartitionKey, 'fYuo_086671929026_Type3') GROUP BY SUBSTRING(c.PartitionKey, 0, 23)");
+using (FeedIterator<dynamic> rsIterator = ctr.GetItemQueryIterator<dynamic>(query
+    , requestOptions: new QueryRequestOptions() { MaxItemCount = 10000 }))
+{
+    while (rsIterator.HasMoreResults)
+    {
+        FeedResponse<dynamic> response = await rsIterator.ReadNextAsync();
+        result.AddRange(response.Resource);
+        totalRU += response.RequestCharge;
     }
 }
 

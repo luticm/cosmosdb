@@ -45,7 +45,7 @@ namespace PartitionDesign
                 ItemResponse<SimpleSensor> ird;
 
                 // 50 sensors, reading every minute
-                for (int j = 0; j < 10000; j++) {
+                for (int j = 0; j < 100000; j++) {
                     for (int i = 1; i <= 50; i++)
                     {
                         timeRange = baseTime.AddSeconds(j).ToString("yyyy-MM-dd-HH-mm");
