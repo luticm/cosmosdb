@@ -29,6 +29,9 @@ msbuild.wrn
 **.cfg
 **.ini
 
+# Local logging
+**corelog.log
+
 #Not ready
 #Scenarios/
 #Partitioning.cs
