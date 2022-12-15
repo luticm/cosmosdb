@@ -26,7 +26,10 @@ msbuild.wrn
 #Config files
 **.config
 **/appsettings.json
+**.cfg
+**.ini
 
 #Not ready
 #Scenarios/
 #Partitioning.cs
+
