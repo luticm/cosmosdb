@@ -5,11 +5,13 @@ using PartitionDesign;
 //CosmosClient cc = Config.InitializeClient();
 HotPartition ht = new HotPartition();
 HotPartitionTime htt = new HotPartitionTime();
+IntroToSDK its = new IntroToSDK();
 
 int option;
 while (true) {
     Console.WriteLine("");
     Console.WriteLine("Choose an option. 0 to exit:");
+    Console.WriteLine("0 - Intro to SDK");
     Console.WriteLine("1 - Hot partition");
     Console.WriteLine("2 - Hot partition time");
     Console.WriteLine("8 - Quick test");
@@ -24,7 +26,14 @@ while (true) {
         break;
     }
 
-    switch (option) { 
+    switch (option) {
+        case 7:
+            Console.WriteLine("0 - SDK Intro");
+            await its.CreateStructure();
+            await its.LoadDocs();
+            await its.PointRead();
+            await its.PointQuery();
+            break;
         case 1: 
             Console.WriteLine("1 - Hot partition");
             await ht.CreateStructure_LoadDocs();
