@@ -1,6 +1,6 @@
-## RU charge vs. document size observation
+# Request Charge vs. document size observations
 
-Observation for common scenario where a document can grow significantly by storing a large json blurb in one property, some "property headers" (probably extracted from received json) and index policy optimized for the properties that will be queried.
+Common scenario where a document can grow significantly by storing a large json blurb in one property, some "property headers" (probably extracted from received json) and index policy optimized for the properties that will be queried.
 
 Sample document with a faker library generating RawJSON.
 
@@ -16,12 +16,14 @@ Sample document with a faker library generating RawJSON.
     "RawJSON": "{\"properties\":{\"human-resource\":\"Money Market Account\",\"Tasty\":\"engage Rubber\",\"niches\":\"program Concrete\",\"indexing\":\"Mall Markets\",\"initiatives\":\"Generic Fresh Tuna\",\"Chief\":\"New Jersey\",\"Crossing\":\"Orchestrator\",.........",
 }
 ```
+<br/>
+<br/>
 
-### Create request units, minimal indexing (only on PartitionKey)
+## Create request units, minimal indexing (only on PartitionKey)
 
 container.CreateItemAsync<type>(e, new PartitionKey(e.PartitionKey));
 
-Request body size and request charge
+Request body size mapping to RUs
 - 769 bytes: 5.9 RUs
 - 1156 ~ 1557 bytes: 7.24 RUs
 - 1905 ~ 3895 bytes: 7.62 RUs
