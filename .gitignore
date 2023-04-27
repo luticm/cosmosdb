@@ -36,3 +36,6 @@ msbuild.wrn
 #Scenarios/
 #Partitioning.cs
 
+#Output files
+OutputFiles/
+
