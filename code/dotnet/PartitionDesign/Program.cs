@@ -5,6 +5,7 @@ using PartitionDesign;
 //CosmosClient cc = Config.InitializeClient();
 HotPartition ht = new HotPartition();
 HotPartitionTime htt = new HotPartitionTime();
+BurstCapacity bc = new BurstCapacity();
 IntroToSDK its = new IntroToSDK();
 
 int option;
@@ -14,6 +15,7 @@ while (true) {
     Console.WriteLine("0 - Intro to SDK");
     Console.WriteLine("1 - Hot partition");
     Console.WriteLine("2 - Hot partition time");
+    Console.WriteLine("3 - Burst capacity");
     Console.WriteLine("8 - Quick test");
     Console.WriteLine("9 - Clean up");
 
@@ -28,7 +30,7 @@ while (true) {
 
     switch (option) {
         case 7:
-            Console.WriteLine("0 - SDK Intro");
+            Console.WriteLine("7 - SDK Intro");
             await its.CreateStructure();
             await its.LoadDocs();
             await its.PointRead();
@@ -42,6 +44,34 @@ while (true) {
         case 2:
             Console.WriteLine("2 - Hot partition time");
             await htt.CreateStructure_LoadDocs();
+            break;
+        case 3:
+            Console.WriteLine("3 - Burst");
+            await bc.PrepareStructure();
+
+            int secondsToWait = 300;
+            int numElements = 10000;
+
+            Console.WriteLine("Enter collection suffix: \"1pp\" (default) or \"5pp\")");
+            string? collSuffix = Console.ReadLine();
+
+            if (collSuffix != "5pp")
+            {
+                collSuffix = "1pp";
+            }
+
+            Console.WriteLine("Processing with 2 threads. \nConfig: {0} seconds to wait; {1} docs ; {2} collSuffix",
+                secondsToWait, numElements, collSuffix);
+
+            List<Task> tasks = new List<Task>();
+            for (int i = 0; i < 2; i++)
+            {   
+                tasks.Add(bc.LoadDocs(secondsToWait, numElements, collSuffix)); // 300 seconds wait and 10K docs per thread
+            }
+            await Task.WhenAll(tasks);
+
+            //await bc.LoadDocs();
+
             break;
         case 8:
             Console.WriteLine("8 - Quick test");
