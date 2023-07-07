@@ -41,3 +41,20 @@ Obs: As additional properties are added, the effective document size is differen
 <br/> Where have I seen similar ranges before...? Ah! (2^10), (2^11), (2^12), (2^13), (2^14)
 
 [Companion file](../Presentations/ReferenceFiles/CreateRUs_MinimalIndexing.xlsx)
+
+<br/> 
+<br/> 
+*-*-*-* DRAFT *-*-*-*
+
+Compression tests
+(slight higher RU per range)
+
+Request body size mapping to RUs
+- 726 bytes: 8.79 RUs
+- 1026 ~ 1806 bytes: 10.1 RUs
+- 1994 ~ 3879 bytes: 10.48 RUs
+- 4027 ~ 7871 bytes: 10.86 RUs
+- 8027 ~ 16180 bytes: 13.33 RUs
+- 16220 ~ 32548 bytes: 15.05 RUs
+- 32612 ~ 65325 bytes: 26.48 RUs
+- 65373 ~ 105601 bytes: 52 RUs
