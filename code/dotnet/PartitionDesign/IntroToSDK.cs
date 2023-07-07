@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.Cosmos;
+﻿using Azure;
+using Microsoft.Azure.Cosmos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +30,7 @@ namespace PartitionDesign
                 Container c = ctrResp.Container;
 
                 // Force small throughput - each partition 400 RUs
-                ThroughputResponse tr = await c.ReplaceThroughputAsync(1000);
+                //ThroughputResponse tr = await c.ReplaceThroughputAsync(1000);
             }
             catch (Exception ex)
             {
@@ -42,6 +43,7 @@ namespace PartitionDesign
         {
             try
             {
+                using StreamWriter sw = new StreamWriter(@"c:\temp\LoadDocsDiagnostics.txt");
                 Container c = cc.GetContainer(databaseName, containerName);
 
                 String newId;
@@ -60,6 +62,7 @@ namespace PartitionDesign
                     {
                         ird = await c.CreateItemAsync<SimpleEntity>(d);
                         Console.WriteLine("Writing simple entities: {0}", i.ToString());
+                        await sw.WriteLineAsync(ird.Diagnostics.ToString());
                     }
                     else
                     {
@@ -87,13 +90,16 @@ namespace PartitionDesign
         {
             try
             {
+                using StreamWriter sw = new StreamWriter(@"c:\temp\PointRead.txt");
                 Container c = cc.GetContainer(databaseName, containerName);
 
-                using StreamWriter sw = new StreamWriter("PointRead.txt");
+                var r = await cc.ReadAccountAsync();
+
                 var resp = await c.ReadItemAsync<SimpleEntity>("1", new PartitionKey("1"));
 
                 sw.WriteLine(resp.Diagnostics.ToString());
                 Console.WriteLine(resp.RequestCharge.ToString());
+
             }
             catch (Exception ex)
             {

@@ -2,7 +2,7 @@
 using Microsoft.Azure.Cosmos;
 using PartitionDesign;
 
-//CosmosClient cc = Config.InitializeClient();
+Config.InitializeClientGateway();
 HotPartition ht = new HotPartition();
 HotPartitionTime htt = new HotPartitionTime();
 BurstCapacity bc = new BurstCapacity();
@@ -12,10 +12,10 @@ int option;
 while (true) {
     Console.WriteLine("");
     Console.WriteLine("Choose an option. 0 to exit:");
-    Console.WriteLine("0 - Intro to SDK");
     Console.WriteLine("1 - Hot partition");
     Console.WriteLine("2 - Hot partition time");
     Console.WriteLine("3 - Burst capacity");
+    Console.WriteLine("7 - Intro to SDK");
     Console.WriteLine("8 - Quick test");
     Console.WriteLine("9 - Clean up");
 
@@ -29,13 +29,6 @@ while (true) {
     }
 
     switch (option) {
-        case 7:
-            Console.WriteLine("7 - SDK Intro");
-            await its.CreateStructure();
-            await its.LoadDocs();
-            await its.PointRead();
-            await its.PointQuery();
-            break;
         case 1: 
             Console.WriteLine("1 - Hot partition");
             await ht.CreateStructure_LoadDocs();
@@ -66,12 +59,17 @@ while (true) {
             List<Task> tasks = new List<Task>();
             for (int i = 0; i < 2; i++)
             {   
-                tasks.Add(bc.LoadDocs(secondsToWait, numElements, collSuffix)); // 300 seconds wait and 10K docs per thread
+                tasks.Add(bc.LoadDocs(secondsToWait, numElements, collSuffix));
             }
+
             await Task.WhenAll(tasks);
-
-            //await bc.LoadDocs();
-
+            break;
+        case 7:
+            Console.WriteLine("7 - SDK Intro");
+            await its.CreateStructure();
+            //await its.LoadDocs();
+            await its.PointRead();
+            await its.PointQuery();
             break;
         case 8:
             Console.WriteLine("8 - Quick test");
