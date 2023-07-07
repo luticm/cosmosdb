@@ -3,7 +3,7 @@
 #   Util script to set the minimum throughput for all Cosmos DB databases and containers in a subscription.
 # ***************************************************************************************
 
-# az login
+az login
 # az account set -s "<SubscriptionId>"
 
 Start-Transcript -Path "C:\Temp\SetMinThroughput_$((Get-Date).ToString("yyyyMMddHH")).log"
