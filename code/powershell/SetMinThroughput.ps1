@@ -1,6 +1,8 @@
 #***************************************************************************************
 #   Author: Luciano Moreira
 #   Util script to set the minimum throughput for all Cosmos DB databases and containers in a subscription.
+#
+#   PS: ignore NotFound messages for offer, this is expected if AZ CLI request doesn't throughput config.
 # ***************************************************************************************
 
 az login

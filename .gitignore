@@ -35,7 +35,9 @@ msbuild.wrn
 #Not ready
 #Scenarios/
 #Partitioning.cs
+Draft/
 
 #Output files
 OutputFiles/
+
 

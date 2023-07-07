@@ -1,6 +1,6 @@
 #!meta
 
-{"kernelInfo":{"defaultKernelName":null,"items":[{"name":"csharp","languageName":"C#","aliases":["c#","cs"]},{"name":"fsharp","languageName":"F#","aliases":["f#","fs"]},{"name":"pwsh","languageName":"PowerShell","aliases":["powershell"]},{"name":"javascript","languageName":"JavaScript","aliases":["js"]},{"name":"html","languageName":"HTML"},{"name":"sql","languageName":"SQL"},{"name":"kql","languageName":"KQL"},{"name":"mermaid","languageName":"Mermaid"},{"name":"httpRequest","languageName":"http"},{"name":"value"}]}}
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":["c#","cs"],"languageName":"C#","name":"csharp"},{"aliases":["f#","fs"],"languageName":"F#","name":"fsharp"},{"aliases":[],"languageName":"HTML","name":"html"},{"aliases":[],"languageName":"http","name":"httpRequest"},{"aliases":["js"],"languageName":"JavaScript","name":"javascript"},{"aliases":[],"languageName":"KQL","name":"kql"},{"aliases":[],"languageName":"Mermaid","name":"mermaid"},{"aliases":["powershell"],"languageName":"PowerShell","name":"pwsh"},{"aliases":[],"languageName":"SQL","name":"sql"},{"aliases":[],"name":"value"}]}}
 
 #!markdown
 
@@ -14,33 +14,16 @@
 
 #!csharp
 
+using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration.Ini;
 using Microsoft.Extensions.Configuration;
 
-
 IConfigurationBuilder cb = new ConfigurationBuilder()
-    .AddIniFile(System.IO.Path.Combine(Environment.CurrentDirectory, "NotebookConfig.cfg"), true, true);
+    .AddIniFile(System.IO.Path.Combine(System.IO.Directory.GetParent(Environment.CurrentDirectory).ToString(), "NotebookConfig.cfg"), true, true);
 IConfiguration config = cb.Build();
 
-// Console.WriteLine(AppDomain.CurrentDomain.BaseDirectory);
-// Console.WriteLine(Environment.CurrentDirectory);
-// Console.WriteLine();
-
-foreach (var x in config.AsEnumerable().Where(t => t.Value is not null)) {
-    //Console.WriteLine(x.Value);
-}
-
-Console.WriteLine(config["CosmosDB:COSMOSDB_ACCOUNT_URI"]);
-Console.WriteLine(config["CosmosDB:COSMOSDB_ACCOUNT_KEY"]);
-Console.WriteLine(config["CosmosDB:CosmosSQL_URI"]);
-Console.WriteLine(config["CosmosDB:CosmosSQL_KEY"]);
-
-#!csharp
-
-using Microsoft.Azure.Cosmos;
-
-string cosmosAccountURI = Environment.GetEnvironmentVariable("COSMOS_ACCOUNT_URI");
-string cosmosAccountKey = Environment.GetEnvironmentVariable("COSMOS_ACCOUNT_KEY");
+string cosmosAccountURI = config["CosmosDB:COSMOSDB_ACCOUNT_URI"];
+string cosmosAccountKey = config["CosmosDB:COSMOSDB_ACCOUNT_KEY"];
 
 string databaseName = "Models";
 string containerName = "Cnt10PhysicalPartitions";
@@ -49,6 +32,8 @@ string osPath = @"./OutputFiles/";
 
 CosmosClient client = new CosmosClient(cosmosAccountURI, cosmosAccountKey, new CosmosClientOptions() { ConnectionMode = ConnectionMode.Gateway});
 Container ctr = client.GetContainer(databaseName, containerName);
+
+Console.WriteLine(config["CosmosDB:COSMOSDB_ACCOUNT_URI"]);
 
 #!csharp
 
@@ -89,9 +74,9 @@ foreach(Object r in result) {
 List<dynamic> result = new List<dynamic>();
 double totalRU = 0;
 
-QueryDefinition query = new QueryDefinition("SELECT c.PartitionKey, count(r.Dimension) AS Count, max(c.Entity.Name) AS Entity, sum(r.Metric) AS Metric  FROM c JOIN r in c.Readings WHERE c.PartitionKey = 'vulT_488002475746_Type6' GROUP BY c.PartitionKey");
+QueryDefinition query = new QueryDefinition("SELECT c.PartitionKey, count(r.Dimension) AS Count, max(c.Entity.Name) AS Entity, sum(r.Metric) AS Metric  FROM c JOIN r in c.Readings WHERE c.PartitionKey = 'wvWt_725520481170_Type4' GROUP BY c.PartitionKey");
 using (FeedIterator<dynamic> rsIterator = ctr.GetItemQueryIterator<dynamic>(query
-    , requestOptions: new QueryRequestOptions() { MaxItemCount = 1000 }))
+    , requestOptions: new QueryRequestOptions() { MaxItemCount = 100 }))
 {
     while (rsIterator.HasMoreResults)
     {
@@ -119,7 +104,7 @@ double totalRU = 0;
 // WHERE startswith(c.PartitionKey, 'fYuo_086671929026_Type3') 
 // GROUP BY SUBSTRING(c.PartitionKey, 0, 23)
 
-QueryDefinition query = new QueryDefinition("SELECT SUBSTRING(c.PartitionKey, 0, 23) AS PartitionKey, count(r.Dimension) AS Count, max(c.Entity.Name) AS Entity, sum(r.Metric) AS Metric FROM c JOIN r in c.Readings WHERE startswith(c.PartitionKey, 'fYuo_086671929026_Type3') GROUP BY SUBSTRING(c.PartitionKey, 0, 23)");
+QueryDefinition query = new QueryDefinition("SELECT SUBSTRING(c.PartitionKey, 0, 23) AS PartitionKey, count(r.Dimension) AS Count, max(c.Entity.Name) AS Entity, sum(r.Metric) AS Metric FROM c JOIN r in c.Readings WHERE startswith(c.PartitionKey, 'KNYL_225086316503_Type1') GROUP BY SUBSTRING(c.PartitionKey, 0, 23)");
 using (FeedIterator<dynamic> rsIterator = ctr.GetItemQueryIterator<dynamic>(query
     , requestOptions: new QueryRequestOptions() { MaxItemCount = 1000 }))
 {
