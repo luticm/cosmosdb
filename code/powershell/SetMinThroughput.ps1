@@ -81,7 +81,7 @@ foreach($rg in $rgs) {
                         }
                     }
                     else {
-                        Write-Output "Autoscale is disabled. Current max: $($colloffer.throughput) `nSuggested shared container throughput minimum: $($colloffer.minimumThroughput)"
+                        Write-Output "Autoscale is disabled. Current max: $($colloffer.throughput) `nSuggested container throughput minimum: $($colloffer.minimumThroughput)"
                         if ($colloffer.throughput -ne $colloffer.minimumThroughput) {
                             Write-Output "Setting shared container throughput to: $($colloffer.minimumThroughput)"
                             az cosmosdb sql container throughput update -g $account.resourceGroup -a $account.name -d $db.name -n $coll.name --throughput $colloffer.minimumThroughput

@@ -16,10 +16,10 @@ write-output "Current Azure Subscription: $(az account show --query '[name, id]'
 $rgs = $null
 
 # Go thru all RGs
-#$rgs = az group list | ConvertFrom-Json | select-object -Property name
+$rgs = az group list | ConvertFrom-Json | select-object -Property name
 
 # OR filter one specific resource group
-$rgs = az group list | ConvertFrom-Json | select-object -Property name | where-object {$_.name -eq "cosmicgbb-datalz"}
+# $rgs = az group list | ConvertFrom-Json | select-object -Property name | where-object {$_.name -eq "cosmicgbb-datalz"}
 
 # For all resource groups
 foreach($rg in $rgs) {

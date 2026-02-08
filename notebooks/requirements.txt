@@ -1,0 +1,5 @@
+faker
+pymongo
+azure-cosmos
+asyncio
+aiohttp
